@@ -1,4 +1,8 @@
-module.exports = {
+const { defineConfig } = require('cypress')
+
+module.exports = defineConfig({
     projectId: "mmpsw8",
-    // ...rest of the Cypress project config
-}
+    e2e: {
+        experimentalStudio: true,
+    },
+})
