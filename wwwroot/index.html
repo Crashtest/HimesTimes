@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Localhost Web App</title>
+    <style>
+        :root {
+            --primary-color: #2196F3;
+            --secondary-color: #1976D2;
+            --background-color: #f5f5f5;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            padding: 20px;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 1em;
+        }
+
+        h2 {
+            color: var(--secondary-color);
+            margin-bottom: 0.8em;
+        }
+
+        nav {
+            background-color: white;
+            padding: 1em;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2em;
+            text-align: center;
+        }
+
+        nav a {
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 0.5em 1em;
+            margin: 0 0.5em;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        section {
+            background-color: white;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.8em 1.5em;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+
+        input, select {
+            padding: 0.8em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 0.5em 0;
+            font-size: 1em;
+            width: 200px;
+        }
+
+        label {
+            display: inline-block;
+            margin-right: 1em;
+            font-weight: 500;
+        }
+
+        #jokeDisplay {
+            margin-top: 1em;
+            padding: 1em;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 1.1em;
+        }
+
+        #swapiResult {
+            margin-top: 1em;
+            padding: 1em;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<h1>Localhost Web App</h1>
+<nav>
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('joke')">Joke Page</a>
+    <a href="#" onclick="showPage('swapi')">SWAPI Page</a>
+<!--    <a href="#" onclick="showPage('marvel')">Marvel Page</a>-->
+</nav>
+
+<section id="home">
+    <h2>Welcome</h2>
+    <p>This is the home page of your localhost web application.</p>
+</section>
+
+<section id="joke" class="hidden">
+    <h2>Get a Geek Joke</h2>
+    <button onclick="getJoke()">Tell Me a Joke</button>
+    <p id="jokeDisplay"></p>
+</section>
+
+<section id="swapi" class="hidden">
+    <h2>Star Wars API Lookup</h2>
+    <label for="category">Choose a category:</label>
+    <select id="category">
+        <option value="films">Films</option>
+        <option value="people">People</option>
+        <option value="planets">Planets</option>
+        <option value="species">Species</option>
+        <option value="vehicles">Vehicles</option>
+        <option value="starships">Starships</option>
+    </select>
+    <br><br>
+    <label for="swapiId">Enter ID number:</label>
+    <input type="number" id="swapiId">
+    <button onclick="getSwapiData()">Fetch</button>
+    <pre id="swapiResult"></pre>
+</section>
+
+<!--<section id="marvel" class="hidden">-->
+<!--    <h2>Marvel Character Search</h2>-->
+<!--    <input type="text" id="marvelName" placeholder="Enter character name">-->
+<!--    <button onclick="searchMarvel()">Search</button>-->
+<!--    <div id="marvelResult"></div>-->
+<!--</section>-->
+
+<!--<script src="https://cdn.jsdelivr.net/npm/blueimp-md5@2.19.0/js/md5.min.js"></script>-->
+<script>
+    function showPage(page) {
+        document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+        document.getElementById(page).classList.remove('hidden');
+    }
+
+    async function getJoke() {
+        const res = await fetch('https://geek-jokes.sameerkumar.website/api?format=json');
+        const data = await res.json();
+        document.getElementById('jokeDisplay').textContent = data.joke;
+    }
+
+    async function getSwapiData() {
+        const category = document.getElementById('category').value;
+        const id = document.getElementById('swapiId').value;
+        const res = await fetch(`https://swapi.tech/api/${category}/${id}/`);
+        if (!res.ok) {
+            document.getElementById('swapiResult').textContent = 'Invalid request or not found.';
+            return;
+        }
+        const data = await res.json();
+        document.getElementById('swapiResult').textContent = JSON.stringify(data, null, 2);
+    }
+
+async function searchMarvel() {
+    const ts = Date.now().toString();
+    const privateKey = '186782a302ee0c1906a9fd34320072016306f2c4';  // Make sure this is correct
+    const publicKey = '7657cfaf17d5d8cfd31eb2797f274c49';    // Make sure this is correct
+    
+    // Log the values to check them
+    console.log('Timestamp:', ts);
+    console.log('Public Key:', publicKey);
+    
+    const stringToHash = ts + privateKey + publicKey;
+    console.log('String to hash:', stringToHash);
+    
+    const hash = md5(stringToHash);
+    console.log('Generated hash:', hash);
+    
+    const name = document.getElementById('marvelName').value;
+    const url = `https://gateway.marvel.com/v1/public/characters?name=${encodeURIComponent(name)}&ts=${ts}&apikey=${publicKey}&hash=${hash}`;
+    
+    console.log('Full URL:', url);
+    
+    // Rest of your fetch code...
+}
+
+async function searchStarWars() {
+    const searchTerm = document.getElementById('starWarsName').value;
+    const url = `https://swapi.tech/api/people/?name=${searchTerm}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const resultDiv = document.getElementById('starWarsResult');
+        resultDiv.innerHTML = '';
+
+        if (data.result && data.result.length > 0) {
+            const character = data.result[0];
+            // Fetch detailed information
+            const detailResponse = await fetch(character.url);
+            const detailData = await detailResponse.json();
+            const properties = detailData.result.properties;
+
+            resultDiv.innerHTML = `
+                <h3>${properties.name}</h3>
+                <p>Height: ${properties.height}cm</p>
+                <p>Mass: ${properties.mass}kg</p>
+                <p>Birth Year: ${properties.birth_year}</p>
+                <p>Eye Color: ${properties.eye_color}</p>
+            `;
+        } else {
+            resultDiv.textContent = 'Character not found';
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('starWarsResult').textContent = 'Error fetching data';
+    }
+}
+</script>
+</body>
+</html>
